@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Easy Contacts</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="importar_contatos">Importar contatos</string>
+    <string name="pesquisar_contato">Pesquisar contato</string>
+    <string name="sobre_mycontacts">Sobre MyContacts</string>
+    <string name="voltar">Voltar</string>
+    <string name="voltar2">Voltar</string>
+    <string name="pesquisar">Buscar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="nome">Nome:</string>
+    <string name="numero">Numero:</string>
+    <string name="e_mail">e-mail:</string>
+    <string name="facebook">Facebook:</string>
+    <string name="twitter">Twitter:</string>
+    <string name="instagram">Instagram:</string>
+    <string name="adicione_aqui_uma_descri_o">Adicione aqui uma descrição...</string>
+    <string name="back">Voltar</string>
+    <string name="salvar_na_nuvem">Salvar na nuvem</string>
+    <string name="sobre">Sobre...</string>
+    <string name="about_me">
+        This app was developed by:
+        \n
+        Pablo D.C.
+        \n
+        Computer Engineering student\n
+        at
+        \n
+        PUC-GO
+        \n\n
+        All the right reserved
+        \n
+        Brazil/2017.
+    </string>
+</resources>
