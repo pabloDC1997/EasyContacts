@@ -1,7 +1,7 @@
 <html>
 	<h1>Easy Contacts</h1>
-	<p>A simple Contacts manege application</p>
-	<p>The Easy Contacts has some integrations using Contents providers and make some cool things. Is aplicated the OOP concepts, and I'm trying to implemet using the MVC archictecure</p>
+	<p>A simple Contacts manage application</p>
+	<p>The Easy Contacts has some integrations using Contents providers and make something cool. Is aplicated the OOP concepts, and I'm trying to implemet using the MVC archictecure</p>
 	<div>
 		<h2> Some informations </h2>
 		<ul>
