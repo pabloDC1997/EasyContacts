@@ -8,36 +8,16 @@ import java.util.List;
  */
 
 public class MyContentContacts {
-    private String id;
     private String name;
-    private List<String> listPhones;
-    private List<String> listMail;
+    private String phones;
+    private String mail;
     private String uriPhoto;
 
-
-    public MyContentContacts(String id, String name, List<String> listPhones, List<String> listMail, String uriPhoto) {
-        this.id = id;
+    public MyContentContacts(String name, String phones, String mail, String uriPhoto) {
         this.name = name;
-        this.listPhones = listPhones;
-        this.listMail = listMail;
+        this.phones = phones;
+        this.mail = mail;
         this.uriPhoto = uriPhoto;
-    }
-    public MyContentContacts() {
-        this.id = null;
-        this.name = null;
-        this.listPhones = new ArrayList<>();
-        this.listMail = new ArrayList<>();
-        this.uriPhoto = null;
-    }
-
-
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -48,20 +28,20 @@ public class MyContentContacts {
         this.name = name;
     }
 
-    public List<String> getListPhones() {
-        return listPhones;
+    public String getPhones() {
+        return phones;
     }
 
-    public void setListPhones(List<String> listPhones) {
-        this.listPhones = listPhones;
+    public void setPhones(String phones) {
+        this.phones = phones;
     }
 
-    public List<String> getListMail() {
-        return listMail;
+    public String getMail() {
+        return mail;
     }
 
-    public void setListMail(List<String> listMail) {
-        this.listMail = listMail;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
     public String getUriPhoto() {
@@ -74,6 +54,6 @@ public class MyContentContacts {
 
     @Override
     public String toString() {
-        return "ID:"+this.id+"\nName:"+this.name+"\nSizeLP:"+this.listPhones.size()+"\nSizeLE:"+this.listMail.size()+"\nUriPhoto:"+this.uriPhoto;
+        return "Name:"+this.name+"\nPhone:"+this.phones+"\nMail:"+this.mail+"\nUriPhoto:"+this.uriPhoto;
     }
 }

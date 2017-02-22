@@ -5,8 +5,10 @@ package com.example.pablo.easycontacts.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
@@ -34,17 +36,19 @@ import com.example.pablo.easycontacts.adapters.ContactsAdapter;
 import com.example.pablo.easycontacts.adapters.DividerItemDecoration;
 import com.example.pablo.easycontacts.adapters.RecyclerTouchListener;
 import com.example.pablo.easycontacts.callback.CallbackAlertDialog;
+import com.example.pablo.easycontacts.callback.CallbackByImportToDB;
 import com.example.pablo.easycontacts.callback.CallbackPermission;
 import com.example.pablo.easycontacts.callback.CallbackReadContacts;
 import com.example.pablo.easycontacts.db.OperationDB;
+import com.example.pablo.easycontacts.services.ByImportToDB;
 import com.example.pablo.easycontacts.services.ReadContacsAscy;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
+import com.example.pablo.easycontacts.utils.ProgressDialogUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
 import com.example.pablo.easycontacts.utils.SortContactsListUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     ShowMessageUtils showMessageUtils;
     StartActivityUtils openActivity;
     OperationDB db;
+
     //binds
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -164,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
     public void delete(int position){
         Boolean tost = db.delete(contactList.get(position));
         if(tost) {
@@ -198,14 +204,11 @@ public class MainActivity extends AppCompatActivity {
         permission.getPermission();
 
         if (hasPermission){
-            readContacsAscy = (ReadContacsAscy) new ReadContacsAscy(this, this, new CallbackReadContacts() {
+            readContacsAscy = new ReadContacsAscy(this, this, new CallbackReadContacts() {
                 @Override
                 public void onFinish(List<MyContentContacts> listResponse) {
                     if(listResponse.size() > 0 ){
                         storeImportOnDatabase(listResponse);
-                        showMessageUtils.showMessageLong("Uhuuu.");
-                    }else {
-                        showMessageUtils.showMessageLong("Não foram encontrado contatos no telefone.");
                     }
                 }
 
@@ -223,11 +226,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void storeImportOnDatabase(List<MyContentContacts> listResponse) {
-        //TODO URGENTE IMPLEMENT
+        List<Contact> listAuxContact = new ArrayList<>();
 
         for (int i=0; i<listResponse.size();  i++){
-            System.out.println(listResponse.get(i).toString());
+            MyContentContacts contactFromDevice = listResponse.get(i);
+            Contact auxContact = new Contact(contactFromDevice.getName(),
+                    contactFromDevice.getPhones(),
+                    contactFromDevice.getMail(),
+                    null,
+                    null,
+                    null,
+                    contactFromDevice.getUriPhoto());
+            listAuxContact.add(auxContact);
         }
+
+        new ByImportToDB(this, this, listAuxContact, new CallbackByImportToDB() {
+            @Override
+            public void onSuccess(Boolean response) {
+                showMessageUtils.showMessageLong("Contatos importados com sucesso.");
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e(MainActivity.class.getName(), e.getMessage());
+            }
+        }).execute();
+
     }
 
     private void prepareContactsData() {
@@ -273,8 +297,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        prepareContactsData();
         super.onResume();
+        prepareContactsData();
     }
 
     @Override
@@ -297,4 +321,5 @@ public class MainActivity extends AppCompatActivity {
     private void finishThisAcativity() {
         this.finish();
     }
+
 }

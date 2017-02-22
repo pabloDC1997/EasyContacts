@@ -36,7 +36,8 @@ public class ReadContacsAscy extends AsyncTask< Void, Void, List<MyContentContac
 
     @Override
     protected void onPreExecute() {
-        progress.setMessage("Lendo contatos... ");
+        progress.setTitle("Lendo.");
+        progress.setMessage("carregando... ");
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.setIndeterminate(true);
         progress.show();
@@ -46,13 +47,11 @@ public class ReadContacsAscy extends AsyncTask< Void, Void, List<MyContentContac
     protected List<MyContentContacts> doInBackground(Void... params) {
 
         List<MyContentContacts> mListResponse = new ArrayList<>();
+        String contactId = null;
+        String name = null;
+        String uriPhoto = null;
 
         try {
-            String contactId = null;
-            String name = null;
-            List<String> listMail = new ArrayList<>();
-            String uriPhoto = null;
-
             Cursor cursor = mContext.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
             while (cursor.moveToNext()) {
@@ -60,8 +59,11 @@ public class ReadContacsAscy extends AsyncTask< Void, Void, List<MyContentContac
                 contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 uriPhoto = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
+
+
 //-----------------------------------------------------------------------------------------------------------------
                 if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+
 
                     Cursor pCur = mContext.getContentResolver()
                             .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -74,6 +76,7 @@ public class ReadContacsAscy extends AsyncTask< Void, Void, List<MyContentContac
                     while (pCur.moveToNext()) {
                         String phone = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         listPhones.add(phone);
+
                     }
 
                     Cursor mailCur = mContext.getContentResolver()
@@ -83,29 +86,36 @@ public class ReadContacsAscy extends AsyncTask< Void, Void, List<MyContentContac
                                     ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
                                     new String[]{contactId}, null);
 
+                    List<String> listMail = new ArrayList<>();
 
                     while (mailCur.moveToNext()) {
                         String eMail = mailCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
                         listMail.add(eMail);
                     }
 
-                    mListResponse.add(new MyContentContacts(
-                            contactId,
-                            name,
-                            listPhones,
-                            listMail,
-                            uriPhoto));
-
+                    if (listMail.size() > 0) {
+                        mListResponse.add(new MyContentContacts(
+                                name,
+                                listPhones.get(listPhones.size() - 1),
+                                listMail.get(listMail.size() - 1),
+                                uriPhoto));
+                    } else {
+                        mListResponse.add(new MyContentContacts(
+                                name,
+                                listPhones.get(listPhones.size() - 1),
+                                null,
+                                uriPhoto));
+                    }
                     mailCur.close();
                     pCur.close();
+
                 }
 //-----------------------------------------------------------------------------------------------------------------
             }
             cursor.close();
         }catch (Exception e){
-            mCallback.onFailure(e.getMessage());
+            mCallback.onFailure("Error: something is wrong here.");
         }
-
         return mListResponse;
     }
 

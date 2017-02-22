@@ -8,8 +8,9 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class ContactsDB extends RealmObject {
-    @PrimaryKey private String name;
 
+
+    private String name;
     private String phoneNumber;
     private String e_Mail;
     private String urlFacebook;

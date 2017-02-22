@@ -10,6 +10,7 @@ import java.util.Objects;
  */
 
 public class Contact implements Serializable {
+    private String urlPhoto;
     private String name;
     private String phoneNumber;
     private String e_Mail;
@@ -47,11 +48,36 @@ public class Contact implements Serializable {
         this.urlInstagram = urlInstagram;
 
     }
+    public Contact(String name, String phoneNumber, String eMail, String urlFacebook, String urlTwitter, String urlInstagram, String urlPhoto) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.e_Mail = eMail;
+        this.urlFacebook = urlFacebook;
+        this.urlTwitter = urlTwitter;
+        this.urlInstagram = urlInstagram;
+        this.urlPhoto = urlPhoto;
+    }
 
     public Contact(String name, String phoneNumber, String eMail) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.e_Mail = eMail;
+    }
+
+    public String getUrlPhoto() {
+        return urlPhoto;
+    }
+
+    public void setUrlPhoto(String urlPhoto) {
+        this.urlPhoto = urlPhoto;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
     public String getName() {
