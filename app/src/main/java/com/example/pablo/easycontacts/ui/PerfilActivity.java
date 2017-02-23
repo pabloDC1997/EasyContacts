@@ -2,13 +2,9 @@ package com.example.pablo.easycontacts.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,13 +12,15 @@ import android.widget.TextView;
 
 import com.example.pablo.easycontacts.Models.Contact;
 import com.example.pablo.easycontacts.R;
-import com.example.pablo.easycontacts.callback.CallbackAlertDialog;
+import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
 import com.example.pablo.easycontacts.db.OperationDB;
 import com.example.pablo.easycontacts.utils.FormatterNumberUtils;
 import com.example.pablo.easycontacts.utils.KeyUtils;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,9 +69,6 @@ public class PerfilActivity extends AppCompatActivity {
     @BindView(R.id.open_twitter_perfil)
     ImageView btnOpenTwitter;
 
-
-    Intent intent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,65 +76,51 @@ public class PerfilActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Perfil");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this);
-
-        intent = getIntent();
         showMessageUtils = new ShowMessageUtils(this);
         db = new OperationDB();
         startActivityUtils = new StartActivityUtils(this);
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        mContacts = (Contact) bundle.getSerializable("contact");
+        this.prepareLayout();
+    }
 
-        String name = intent.getStringExtra(KeyUtils.NAME);
-        mTextName.setText(name);
+    private void prepareLayout() {
+        mTextName.setText(mContacts.getName());
+        mTextPhone.setText(FormatterNumberUtils.formatterPhone(mContacts.getPhoneNumber()));
 
-        String phone = intent.getStringExtra(KeyUtils.PHONE);
-        mTextPhone.setText(FormatterNumberUtils.formatterPhone(phone));
-
-        String eMail = intent.getStringExtra(KeyUtils.E_MAIL);
-        if(eMail != null) { mTextEMail.setText(eMail); }
-
-        if(mTextEMail.getText().toString().length() <=0){
+        if(mContacts.getE_Mail() != null && mContacts.getE_Mail().length() > 0) {
+            mTextEMail.setText(mContacts.getE_Mail());
+        } else {
             btnOpenEmail.setEnabled(false);
             btnOpenEmail.setVisibility(View.GONE);
         }
 
-        String facebook = intent.getStringExtra(KeyUtils.FACEBOOK);
-        if(facebook != null) { mTextFacebook.setText(facebook); }
-
-        if(mTextFacebook.getText().toString().length() <= 3){
+        if(!Objects.equals(
+                mContacts.getUrlFacebook(), KeyUtils.URL_FB)
+                &&
+                mContacts.getUrlFacebook().length() > KeyUtils.URL_FB.length())
+        {
+            mTextFacebook.setText(mContacts.getUrlFacebook());
+        } else {
             btnOpenFacebook.setEnabled(false);
             btnOpenFacebook.setVisibility(View.GONE);
         }
 
-        String twitter = intent.getStringExtra(KeyUtils.TWITTER);
-        if(twitter != null) { mTextTwitter.setText(twitter); }
-
-        if(mTextTwitter.getText().toString().length() <=3){
-            btnOpenTwitter.setEnabled(false);
-            btnOpenTwitter.setVisibility(View.GONE);
-        }
-
-        String instagram = intent.getStringExtra(KeyUtils.INSTAGRAM);
-        if(instagram != null) { mTextInstagram.setText(instagram); }
-
-        if(mTextInstagram.getText().toString().length() <=3){
+        if(!Objects.equals(mContacts.getUrlInstagram(), KeyUtils.URL_INST)) {
+            mTextInstagram.setText(mContacts.getUrlInstagram());
+        } else {
             btnOpenInstagram.setEnabled(false);
             btnOpenInstagram.setVisibility(View.GONE);
         }
 
-        mContacts = new Contact(name
-                , phone
-                , eMail
-                , facebook
-                , twitter
-                , instagram);
+        if(!Objects.equals(mContacts.getUrlTwitter(), KeyUtils.URL_TWITTER)) {
+            mTextTwitter.setText(mContacts.getUrlTwitter());
+        } else {
+            btnOpenTwitter.setEnabled(false);
+            btnOpenTwitter.setVisibility(View.GONE);
+        }
     }
-
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.insert_edit_menu, menu);
-//        return true;
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menu) {
@@ -151,7 +132,6 @@ public class PerfilActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(menu);
         }
     }
-
 
     @OnClick(R.id.btn_edit_contacts_perfil)
     public void onClickEdit(){
@@ -179,6 +159,7 @@ public class PerfilActivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
     public void delete(Contact con){
         Boolean tost = db.delete(con);
         if(tost) {
@@ -229,7 +210,6 @@ public class PerfilActivity extends AppCompatActivity {
         showMessageUtils.showMessageShort("implement this");
         //TODO - make
     }
-
 
     private void backToHome() {
         startActivityUtils.run(MainActivity.class);

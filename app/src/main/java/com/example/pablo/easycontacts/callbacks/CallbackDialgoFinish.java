@@ -1,4 +1,4 @@
-package com.example.pablo.easycontacts.callback;
+package com.example.pablo.easycontacts.callbacks;
 
 /**
  * Created by Pablo on 04/02/2017.

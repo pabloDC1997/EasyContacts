@@ -9,7 +9,7 @@ import android.provider.ContactsContract;
 
 
 import com.example.pablo.easycontacts.Models.MyContentContacts;
-import com.example.pablo.easycontacts.callback.CallbackReadContacts;
+import com.example.pablo.easycontacts.callbacks.CallbackReadContacts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,10 +60,7 @@ public class ReadContacsAscy extends AsyncTask< Void, Void, List<MyContentContac
                 name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 uriPhoto = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
 
-
-//-----------------------------------------------------------------------------------------------------------------
                 if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-
 
                     Cursor pCur = mContext.getContentResolver()
                             .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -110,7 +107,7 @@ public class ReadContacsAscy extends AsyncTask< Void, Void, List<MyContentContac
                     pCur.close();
 
                 }
-//-----------------------------------------------------------------------------------------------------------------
+
             }
             cursor.close();
         }catch (Exception e){

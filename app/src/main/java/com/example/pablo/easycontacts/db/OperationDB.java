@@ -65,13 +65,14 @@ public  class OperationDB implements interfaceDB<Contact> {
         try {
             realm = Realm.getDefaultInstance();
             realm.beginTransaction();
-            ContactsDB contactsDB = realm.createObject(ContactsDB.class,obj.getName());
+            ContactsDB contactsDB = realm.createObject(ContactsDB.class);
 
             if (obj.getName() == null || obj.getName().isEmpty() || obj.getPhoneNumber() == null || obj.getPhoneNumber().isEmpty()){
                 realm.cancelTransaction();
                 realm.close();
                 return false;
             }
+            contactsDB.setName(obj.getName());
             contactsDB.setPhoneNumber(obj.getPhoneNumber());
             contactsDB.setE_Mail(obj.getE_Mail());
             contactsDB.setUrlFacebook(obj.getUrlFacebook());

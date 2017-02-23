@@ -1,4 +1,4 @@
-package com.example.pablo.easycontacts.callback;
+package com.example.pablo.easycontacts.callbacks;
 
 import com.example.pablo.easycontacts.Models.MyContentContacts;
 

@@ -6,7 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.pablo.easycontacts.Models.Contact;
-import com.example.pablo.easycontacts.callback.CallbackByImportToDB;
+import com.example.pablo.easycontacts.callbacks.CallbackByImportToDB;
 import com.example.pablo.easycontacts.db.OperationDB;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * Created by Pablo on 16/02/2017.
  */
 
-public class ByImportToDB extends AsyncTask<Void,Void,Boolean>{
+public class ImportIntoDB extends AsyncTask<Void,Void,Boolean>{
     private Context mContext;
     private Activity mActivity;
     private CallbackByImportToDB mCallback;
@@ -24,7 +24,7 @@ public class ByImportToDB extends AsyncTask<Void,Void,Boolean>{
     private List<Contact> mListContacts;
     private ProgressDialog progress;
 
-    public ByImportToDB(Context mContext, Activity mActivity, List<Contact> listContacts, CallbackByImportToDB mCallback) {
+    public ImportIntoDB(Context mContext, Activity mActivity, List<Contact> listContacts, CallbackByImportToDB mCallback) {
         this.mContext = mContext;
         this.mActivity = mActivity;
         this.mCallback = mCallback;

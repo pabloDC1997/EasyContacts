@@ -1,5 +1,7 @@
 package com.example.pablo.easycontacts.db;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -10,7 +12,7 @@ import io.realm.annotations.PrimaryKey;
 public class ContactsDB extends RealmObject {
 
 
-    private String name;
+    @NotNull private String name;
     private String phoneNumber;
     private String e_Mail;
     private String urlFacebook;

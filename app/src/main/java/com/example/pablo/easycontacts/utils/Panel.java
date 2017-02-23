@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.EditText;
 
-import com.example.pablo.easycontacts.callback.CallbackAlertDialog;
-import com.example.pablo.easycontacts.callback.CallbackAlertDialogWithED;
+import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
+import com.example.pablo.easycontacts.callbacks.CallbackAlertDialogWithED;
 
 /**
  * Created by Pablo on 20/02/2017.

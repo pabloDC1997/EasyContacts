@@ -3,7 +3,7 @@ package com.example.pablo.easycontacts.utils;
 import android.Manifest;
 import android.content.Context;
 
-import com.example.pablo.easycontacts.callback.CallbackPermission;
+import com.example.pablo.easycontacts.callbacks.CallbackPermission;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
@@ -28,7 +28,6 @@ public class PermissionUtils {
         PermissionListener permission = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-//                message.showMessageLong("Permissão consedida.");
                 mCallback.permissionResponse(true);
             }
 

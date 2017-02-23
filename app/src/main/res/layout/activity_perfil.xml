@@ -109,8 +109,7 @@
                     android:maxLines="1"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="15dp"
-                    android:textSize="16sp"
-                    android:text="exemplo@outlook.com.br"/>
+                    android:textSize="16sp" />
 
                 <ImageView
                     android:id="@+id/open_email_perfil"
@@ -120,7 +119,8 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/mail_icon"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:visibility="gone"/>
 
 
             </RelativeLayout>
@@ -143,8 +143,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_centerVertical="true"
                     android:maxLines="1"
-                    android:textSize="16sp"
-                    android:text="fb.com/pablodias"/>
+                    android:textSize="16sp"/>
 
                 <ImageView
                     android:id="@+id/open_facebook_perfil"
@@ -154,7 +153,8 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/facebook_icon"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
             <View
@@ -176,8 +176,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_centerVertical="true"
                     android:maxLines="1"
-                    android:textSize="16sp"
-                    android:text="inst: exemploinstagram"/>
+                    android:textSize="16sp"/>
 
                 <ImageView
                     android:id="@+id/open_instagram_perfil"
@@ -187,7 +186,8 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/instagram"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
             <View
@@ -209,8 +209,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_centerVertical="true"
                     android:maxLines="1"
-                    android:textSize="16sp"
-                    android:text="\@tt_exemplo"/>
+                    android:textSize="16sp"/>
 
                 <ImageView
                     android:id="@+id/open_twitter_perfil"
@@ -220,7 +219,8 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/twitter"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
             <View

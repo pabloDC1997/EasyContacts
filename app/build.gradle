@@ -8,7 +8,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.1 BETA"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -31,7 +31,6 @@ dependencies {
     compile 'com.android.support:design:25.1.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile 'gun0912.ted:tedpermission:1.0.2'
     compile 'gun0912.ted:tedpermission:1.0.2'
     compile 'com.redmadrobot:inputmask:2.2.1'
     compile 'com.azimolabs.maskformatter:maskformatter:0.2'

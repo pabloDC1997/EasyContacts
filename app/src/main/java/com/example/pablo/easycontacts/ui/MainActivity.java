@@ -5,10 +5,8 @@ package com.example.pablo.easycontacts.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
@@ -23,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ActionMenuView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,18 +32,18 @@ import com.example.pablo.easycontacts.adapters.ClickListener;
 import com.example.pablo.easycontacts.adapters.ContactsAdapter;
 import com.example.pablo.easycontacts.adapters.DividerItemDecoration;
 import com.example.pablo.easycontacts.adapters.RecyclerTouchListener;
-import com.example.pablo.easycontacts.callback.CallbackAlertDialog;
-import com.example.pablo.easycontacts.callback.CallbackByImportToDB;
-import com.example.pablo.easycontacts.callback.CallbackPermission;
-import com.example.pablo.easycontacts.callback.CallbackReadContacts;
+import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
+import com.example.pablo.easycontacts.callbacks.CallbackByImportToDB;
+import com.example.pablo.easycontacts.callbacks.CallbackLoadingContacts;
+import com.example.pablo.easycontacts.callbacks.CallbackPermission;
+import com.example.pablo.easycontacts.callbacks.CallbackReadContacts;
 import com.example.pablo.easycontacts.db.OperationDB;
-import com.example.pablo.easycontacts.services.ByImportToDB;
+import com.example.pablo.easycontacts.services.ImportIntoDB;
+import com.example.pablo.easycontacts.services.LoadingContactsData;
 import com.example.pablo.easycontacts.services.ReadContacsAscy;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
-import com.example.pablo.easycontacts.utils.ProgressDialogUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
-import com.example.pablo.easycontacts.utils.SortContactsListUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
 
 import java.util.ArrayList;
@@ -56,8 +53,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
 
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ClickListener {
 
     private List<Contact> contactList;
     private RecyclerView recyclerView;
@@ -72,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     OperationDB db;
 
     //binds
-    @BindView(R.id.progress_bar)
+    @BindView(R.id.progress_bar_main)
     ProgressBar progressBar;
     @BindView(R.id.btn_add_icon)
     FloatingActionButton btnAddContact;
@@ -101,18 +97,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                openPerfilActivity(position);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                openDialogLayout(contactList.get(position).getName(), position);
-            }
-        }));
-
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, this));
         prepareContactsData();
     }
 
@@ -171,8 +156,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void delete(int position){
-        Boolean tost = db.delete(contactList.get(position));
-        if(tost) {
+        Boolean bool = db.delete(contactList.get(position));
+        if(bool) {
             showMessageUtils.showMessageLong(contactList.get(position).getName() + " deletado.");
             prepareContactsData();
         } else {
@@ -207,9 +192,10 @@ public class MainActivity extends AppCompatActivity {
             readContacsAscy = new ReadContacsAscy(this, this, new CallbackReadContacts() {
                 @Override
                 public void onFinish(List<MyContentContacts> listResponse) {
-                    if(listResponse.size() > 0 ){
+                    if(listResponse.size() > 0 )
                         storeImportOnDatabase(listResponse);
-                    }
+                    else
+                        showMessageUtils.showMessageLong("Não foram encontrados contatos.");
                 }
 
                 @Override
@@ -240,9 +226,11 @@ public class MainActivity extends AppCompatActivity {
             listAuxContact.add(auxContact);
         }
 
-        new ByImportToDB(this, this, listAuxContact, new CallbackByImportToDB() {
+        new ImportIntoDB(this, this, listAuxContact, new CallbackByImportToDB() {
             @Override
             public void onSuccess(Boolean response) {
+                prepareContactsData();
+                mAdapter.notifyDataSetChanged();
                 showMessageUtils.showMessageLong("Contatos importados com sucesso.");
             }
 
@@ -251,17 +239,23 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(MainActivity.class.getName(), e.getMessage());
             }
         }).execute();
-
     }
 
     private void prepareContactsData() {
-        contactList.clear();
-        List<Contact> aux = db.selectAll();
-        for (int i=0; i<aux.size(); i++){
-            contactList.add(aux.get(i));
-        }
-        SortContactsListUtils.SORTLIST(contactList);
-        mAdapter.notifyDataSetChanged();
+        new LoadingContactsData(this, new CallbackLoadingContacts<Contact>() {
+            @Override
+            public void onFinish(List<Contact> listResponse) {
+                for (int i=0; i< listResponse.size(); i++){
+                    contactList.add(listResponse.get(i));
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e(MainActivity.class.getName(),e.getMessage());
+            }
+        }).execute();
     }
 
     private void openDialogLayout(String name, int pos){
@@ -296,12 +290,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        prepareContactsData();
-    }
-
-    @Override
     public void onBackPressed() {
 
         final AlertDialog dialog = Panel.alertPanel(this, "Sair?", "Deseja sair do Easy Contacts?", "SIM", "NÃO", new CallbackAlertDialog() {
@@ -322,4 +310,26 @@ public class MainActivity extends AppCompatActivity {
         this.finish();
     }
 
+    @Override
+    protected void onStart() {
+        progressBar.setVisibility(View.VISIBLE);
+        prepareContactsData();
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        progressBar.setVisibility(View.INVISIBLE);
+        super.onResume();
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        openPerfilActivity(position);
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+        openDialogLayout(contactList.get(position).getName(), position);
+    }
 }
