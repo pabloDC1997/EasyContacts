@@ -3,15 +3,12 @@ package com.example.pablo.easycontacts.ui;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,10 +28,6 @@ import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
-
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -262,11 +255,9 @@ public class PerfilActivity extends AppCompatActivity {
                 } else {
                     try {
                         ObjectMail param = FormatEmailUtils.FORMAT_MAIL(inputED);
-
                         if (param == null){
                             new Exception("Erro inesperado, metodo onEmailClicked");
                         }
-
                         startActivityEmail(param.getTitle(),param.getBody());
                     }catch (Exception e) {
                         Log.e(MainActivity.class.getName(),e.getMessage());
@@ -285,7 +276,6 @@ public class PerfilActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setType("text/plain");
         intent.setData(Uri.parse("mailto:"+mContacts.getE_Mail()));
-//        intent.putExtra(Intent.EXTRA_EMAIL, mContacts.getE_Mail());
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, msg);
         startActivity(intent);
@@ -293,20 +283,70 @@ public class PerfilActivity extends AppCompatActivity {
 
     @OnClick(R.id.open_facebook_perfil)
     public void onFaceClicked(){
-        showMessageUtils.showMessageShort("implement this");
-        //TODO - make
+        new PermissionUtils(this, Manifest.permission.INTERNET, new CallbackPermission() {
+            @Override
+            public void permissionResponse(boolean response) {
+                if (response) {
+                    starAticityFACEBOOK();
+                } else {
+                    showMessageUtils.showMessageShort("Permissão negada.");
+                }
+            }
+        }).getPermission();
+    }
+
+    private void starAticityFACEBOOK() {
+        //todo implement this integration with the app, not webpage
+        Uri uri = Uri.parse("https://www."+mContacts.getUrlFacebook());
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @OnClick(R.id.open_instagram_perfil)
     public void onInstClicked(){
-        showMessageUtils.showMessageShort("implement this");
-        //TODO - make
+        new PermissionUtils(this, Manifest.permission.INTERNET, new CallbackPermission() {
+            @Override
+            public void permissionResponse(boolean response) {
+                starAcitityINSTAGRAM();
+            }
+        }).getPermission();
+    }
+
+    private void starAcitityINSTAGRAM() {
+        try {
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            final String username = mContacts.getUrlInstagram().substring(mContacts.getUrlInstagram().lastIndexOf("/") + 1);
+            intent.setData(Uri.parse("http://instagram.com/_u/" + username));
+            intent.setPackage("com.instagram.android");
+            startActivity(intent);
+        }catch (Exception e){
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://www."+ mContacts.getUrlInstagram())));
+        }
     }
 
     @OnClick(R.id.open_twitter_perfil)
     public void onTwitterClicked(){
-        showMessageUtils.showMessageShort("implement this");
-        //TODO - make
+        new PermissionUtils(this, Manifest.permission.INTERNET, new CallbackPermission() {
+            @Override
+            public void permissionResponse(boolean response) {
+                startActivityTWITTER();
+            }
+        }).getPermission();
+    }
+
+    private void startActivityTWITTER() {
+        String userNameTwitter = mContacts.getUrlTwitter().substring(mContacts.getUrlTwitter().lastIndexOf("/") + 1);
+        try {
+            startActivity(new
+                    Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" +
+                    userNameTwitter)));
+
+        }catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/#!/" + userNameTwitter)));
+            }
     }
 
     private void backToHome() {
