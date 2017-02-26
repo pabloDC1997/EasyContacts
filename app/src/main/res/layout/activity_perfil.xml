@@ -119,8 +119,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/mail_icon"
-                    android:clickable="true"
-                    android:visibility="gone"/>
+                    android:clickable="true" />
 
 
             </RelativeLayout>
@@ -153,8 +152,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/facebook_icon"
-                    android:clickable="true"
-                    android:visibility="gone"/>
+                    android:clickable="true" />
 
             </RelativeLayout>
             <View
@@ -186,8 +184,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/instagram"
-                    android:clickable="true"
-                    android:visibility="gone"/>
+                    android:clickable="true" />
 
             </RelativeLayout>
             <View
@@ -219,8 +216,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/twitter"
-                    android:clickable="true"
-                    android:visibility="gone"/>
+                    android:clickable="true" />
 
             </RelativeLayout>
             <View

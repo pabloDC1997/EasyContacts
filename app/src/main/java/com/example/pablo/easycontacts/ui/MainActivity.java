@@ -44,6 +44,7 @@ import com.example.pablo.easycontacts.services.ReadContacsAscy;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
+import com.example.pablo.easycontacts.utils.SortContactsListUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
 
 import java.util.ArrayList;
@@ -60,19 +61,13 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     private ContactsAdapter mAdapter;
     boolean hasPermission;
     ReadContacsAscy readContacsAscy;
-
-    Cursor cursor;
-    //utils objects
     ShowMessageUtils showMessageUtils;
     StartActivityUtils openActivity;
     OperationDB db;
-
-    //binds
     @BindView(R.id.progress_bar_main)
     ProgressBar progressBar;
     @BindView(R.id.btn_add_icon)
     FloatingActionButton btnAddContact;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +75,10 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         Realm.init(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        //services asyc
-
-
-        //ultis objects
         showMessageUtils = new ShowMessageUtils(this);
         contactList = new ArrayList<>();
         openActivity = new StartActivityUtils(this);
         db = new OperationDB();
-        //RicyclerViews
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mAdapter = new ContactsAdapter(contactList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -98,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mAdapter);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, this));
-        prepareContactsData();
+        buildContactsData();
     }
 
     @Override
@@ -159,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         Boolean bool = db.delete(contactList.get(position));
         if(bool) {
             showMessageUtils.showMessageLong(contactList.get(position).getName() + " deletado.");
-            prepareContactsData();
+            buildContactsData();
         } else {
             showMessageUtils.showMessageLong("Não foi possivel deletar este contato.");
         }
@@ -229,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         new ImportIntoDB(this, this, listAuxContact, new CallbackByImportToDB() {
             @Override
             public void onSuccess(Boolean response) {
-                prepareContactsData();
+                buildContactsData();
                 mAdapter.notifyDataSetChanged();
                 showMessageUtils.showMessageLong("Contatos importados com sucesso.");
             }
@@ -241,12 +230,14 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         }).execute();
     }
 
-    private void prepareContactsData() {
+    private void buildContactsData() {
         new LoadingContactsData(this, new CallbackLoadingContacts<Contact>() {
             @Override
             public void onFinish(List<Contact> listResponse) {
-                for (int i=0; i< listResponse.size(); i++){
-                    contactList.add(listResponse.get(i));
+                contactList.clear();
+                if (listResponse.size() > 0 ) {
+                    contactList.addAll(listResponse);
+                    SortContactsListUtils.SORTLIST(contactList);
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -313,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     @Override
     protected void onStart() {
         progressBar.setVisibility(View.VISIBLE);
-        prepareContactsData();
+        buildContactsData();
         super.onStart();
     }
 

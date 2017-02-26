@@ -42,8 +42,6 @@ public class LoadingContactsData extends AsyncTask<Void, Void, List<Contact>> {
     protected List<Contact> doInBackground(Void... voids) {
         try {
             contactList = db.selectAll();
-            SortContactsListUtils.SORTLIST(contactList);
-
         }catch (Exception e){
             mCallback.onFailure(e);
         }

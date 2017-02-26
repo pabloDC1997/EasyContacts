@@ -53,6 +53,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/text_input_email_ed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
@@ -64,6 +65,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/text_input_facebook_ed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
@@ -75,6 +77,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/text_input_twitter_ed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
@@ -86,6 +89,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/text_input_instagram_ed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText

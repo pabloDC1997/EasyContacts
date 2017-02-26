@@ -9,18 +9,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.pablo.easycontacts.Models.Contact;
 import com.example.pablo.easycontacts.R;
 import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
 import com.example.pablo.easycontacts.db.OperationDB;
 import com.example.pablo.easycontacts.utils.FormatterNumberUtils;
-import com.example.pablo.easycontacts.utils.KeyUtils;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
 
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,13 +26,9 @@ import butterknife.OnClick;
 public class PerfilActivity extends AppCompatActivity {
 
     Contact mContacts;
-
     OperationDB db;
-
     ShowMessageUtils showMessageUtils;
-
     StartActivityUtils startActivityUtils;
-
     @BindView(R.id.output_perfil_name)
     TextView mTextName;
     @BindView(R.id.output_perfil_phone)
@@ -48,12 +41,10 @@ public class PerfilActivity extends AppCompatActivity {
     TextView mTextInstagram;
     @BindView(R.id.output_perfil_twitter)
     TextView mTextTwitter;
-
     @BindView(R.id.btn_delete_contacts_perfil)
     FloatingActionButton btnDelete;
     @BindView(R.id.btn_edit_contacts_perfil)
     FloatingActionButton btnEdit;
-
     @BindView(R.id.open_call_perfil)
     ImageView btnOpenCall;
     @BindView(R.id.open_message_perfil)
@@ -89,36 +80,39 @@ public class PerfilActivity extends AppCompatActivity {
         mTextName.setText(mContacts.getName());
         mTextPhone.setText(FormatterNumberUtils.formatterPhone(mContacts.getPhoneNumber()));
 
-        if(mContacts.getE_Mail() != null && mContacts.getE_Mail().length() > 0) {
+        if( mContacts.getE_Mail() != null ) {
             mTextEMail.setText(mContacts.getE_Mail());
+            btnOpenEmail.setVisibility(View.VISIBLE);
         } else {
             btnOpenEmail.setEnabled(false);
-            btnOpenEmail.setVisibility(View.GONE);
+            btnOpenEmail.setVisibility(View.INVISIBLE);
         }
 
-        if(!Objects.equals(
-                mContacts.getUrlFacebook(), KeyUtils.URL_FB)
-                &&
-                mContacts.getUrlFacebook().length() > KeyUtils.URL_FB.length())
-        {
+        if( mContacts.getUrlFacebook() != null ) {
             mTextFacebook.setText(mContacts.getUrlFacebook());
+            btnOpenFacebook.setVisibility(View.VISIBLE);
+            btnOpenFacebook.setEnabled(true);
         } else {
             btnOpenFacebook.setEnabled(false);
-            btnOpenFacebook.setVisibility(View.GONE);
+            btnOpenFacebook.setVisibility(View.INVISIBLE);
         }
 
-        if(!Objects.equals(mContacts.getUrlInstagram(), KeyUtils.URL_INST)) {
+        if( mContacts.getUrlInstagram() != null ) {
             mTextInstagram.setText(mContacts.getUrlInstagram());
+            btnOpenInstagram.setVisibility(View.VISIBLE);
+            btnOpenInstagram.setEnabled(true);
         } else {
+            btnOpenInstagram.setVisibility(View.INVISIBLE);
             btnOpenInstagram.setEnabled(false);
-            btnOpenInstagram.setVisibility(View.GONE);
         }
 
-        if(!Objects.equals(mContacts.getUrlTwitter(), KeyUtils.URL_TWITTER)) {
+        if( mContacts.getUrlTwitter() != null ) {
             mTextTwitter.setText(mContacts.getUrlTwitter());
+            btnOpenTwitter.setVisibility(View.VISIBLE);
+            btnOpenTwitter.setEnabled(true);
         } else {
             btnOpenTwitter.setEnabled(false);
-            btnOpenTwitter.setVisibility(View.GONE);
+            btnOpenTwitter.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -149,7 +143,7 @@ public class PerfilActivity extends AppCompatActivity {
         AlertDialog dialog = Panel.alertPanel(this, "Deletar?", "Tem certeza que quer deletar " + con.getName(), "Sim", "Não", new CallbackAlertDialog() {
             @Override
             public void onPositiveButtonPressed() {
-                delete(con);
+                delete();
             }
 
             @Override
@@ -160,10 +154,11 @@ public class PerfilActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void delete(Contact con){
-        Boolean tost = db.delete(con);
+    public void delete(){
+        Boolean tost = db.delete(mContacts);
         if(tost) {
-            showMessageUtils.showMessageLong(con.getName() + " deletado.");
+            showMessageUtils.showMessageLong(mContacts.getName() + " deletado.");
+            this.backToHome();
         } else {
             showMessageUtils.showMessageLong("Não foi possivel deletar este contato.");
         }
