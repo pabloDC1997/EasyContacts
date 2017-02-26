@@ -17,11 +17,13 @@ public class PermissionUtils {
     private Context mContext;
     ShowMessageUtils message;
     CallbackPermission mCallback;
+    String typePermission;
 
-    public PermissionUtils(Context mContext, CallbackPermission callback) {
+    public PermissionUtils(Context mContext, String typePermission,CallbackPermission callback) {
         this.mContext = mContext;
         this.message = new ShowMessageUtils(mContext);
         this.mCallback = callback;
+        this.typePermission = typePermission;
     }
 
     public void getPermission() {
@@ -42,9 +44,7 @@ public class PermissionUtils {
                 .setRationaleMessage("Easy contacts precissa de permissão para acessar os contatos amazenados no telefone.")
                 .setDeniedMessage("Se você rejeitar a permissão, Easy Contacts não consiguirá importar contatos de seu telefone")
                 .setGotoSettingButtonText("setting")
-                .setPermissions(Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SYSTEM_ALERT_WINDOW)
+                .setPermissions(typePermission, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SYSTEM_ALERT_WINDOW)
                 .check();
     }
-    
-
 }

@@ -3,6 +3,7 @@ package com.example.pablo.easycontacts.ui;
 
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -169,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void importContacts() {
-        PermissionUtils permission = new PermissionUtils(this, new CallbackPermission() {
+        PermissionUtils permission = new PermissionUtils(this, Manifest.permission.READ_CONTACTS, new CallbackPermission() {
             @Override
             public void permissionResponse(boolean response) {
                 hasPermission = response;

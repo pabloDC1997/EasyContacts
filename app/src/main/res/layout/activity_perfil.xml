@@ -79,15 +79,15 @@
                     android:src="@drawable/message_icon"
                     android:clickable="true"/>
 
-                <ImageView
-                    android:id="@+id/open_wpp_perfil"
-                    android:layout_toStartOf="@+id/open_message_perfil"
-                    android:layout_width="30dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/whatsapp_icone"
-                    android:clickable="true"/>
+                <!--<ImageView-->
+                    <!--android:id="@+id/open_wpp_perfil"-->
+                    <!--android:layout_toStartOf="@+id/open_message_perfil"-->
+                    <!--android:layout_width="30dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginEnd="5dp"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:src="@drawable/whatsapp_icone"-->
+                    <!--android:clickable="true"/>-->
 
             </RelativeLayout>
             <View

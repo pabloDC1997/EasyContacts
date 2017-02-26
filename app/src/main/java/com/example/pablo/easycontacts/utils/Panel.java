@@ -1,8 +1,10 @@
 package com.example.pablo.easycontacts.utils;
 
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.View;
 import android.widget.EditText;
 
 import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
@@ -47,6 +49,9 @@ public class Panel {
         final CallbackAlertDialogWithED mCallback = callback;
 
         final EditText editText = new EditText(mContext);
+        editText.setMaxLines(5);
+        editText.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
                 .setTitle(title)
                 .setMessage(message)

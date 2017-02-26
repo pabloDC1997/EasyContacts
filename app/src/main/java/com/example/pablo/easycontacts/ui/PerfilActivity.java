@@ -1,23 +1,37 @@
 package com.example.pablo.easycontacts.ui;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.example.pablo.easycontacts.Models.Contact;
 import com.example.pablo.easycontacts.R;
 import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
+import com.example.pablo.easycontacts.callbacks.CallbackAlertDialogWithED;
+import com.example.pablo.easycontacts.callbacks.CallbackPermission;
 import com.example.pablo.easycontacts.db.OperationDB;
 import com.example.pablo.easycontacts.utils.FormatterNumberUtils;
 import com.example.pablo.easycontacts.utils.Panel;
+import com.example.pablo.easycontacts.utils.PermissionUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,8 +63,8 @@ public class PerfilActivity extends AppCompatActivity {
     ImageView btnOpenCall;
     @BindView(R.id.open_message_perfil)
     ImageView btnOpenMessageText;
-    @BindView(R.id.open_wpp_perfil)
-    ImageView btnOpenWhatsapp;
+//    @BindView(R.id.open_wpp_perfil)
+//    ImageView btnOpenWhatsapp;
     @BindView(R.id.open_email_perfil)
     ImageView btnOpenEmail;
     @BindView(R.id.open_facebook_perfil)
@@ -80,7 +94,7 @@ public class PerfilActivity extends AppCompatActivity {
         mTextName.setText(mContacts.getName());
         mTextPhone.setText(FormatterNumberUtils.formatterPhone(mContacts.getPhoneNumber()));
 
-        if( mContacts.getE_Mail() != null ) {
+        if (mContacts.getE_Mail() != null) {
             mTextEMail.setText(mContacts.getE_Mail());
             btnOpenEmail.setVisibility(View.VISIBLE);
         } else {
@@ -88,7 +102,7 @@ public class PerfilActivity extends AppCompatActivity {
             btnOpenEmail.setVisibility(View.INVISIBLE);
         }
 
-        if( mContacts.getUrlFacebook() != null ) {
+        if (mContacts.getUrlFacebook() != null) {
             mTextFacebook.setText(mContacts.getUrlFacebook());
             btnOpenFacebook.setVisibility(View.VISIBLE);
             btnOpenFacebook.setEnabled(true);
@@ -97,7 +111,7 @@ public class PerfilActivity extends AppCompatActivity {
             btnOpenFacebook.setVisibility(View.INVISIBLE);
         }
 
-        if( mContacts.getUrlInstagram() != null ) {
+        if (mContacts.getUrlInstagram() != null) {
             mTextInstagram.setText(mContacts.getUrlInstagram());
             btnOpenInstagram.setVisibility(View.VISIBLE);
             btnOpenInstagram.setEnabled(true);
@@ -106,7 +120,7 @@ public class PerfilActivity extends AppCompatActivity {
             btnOpenInstagram.setEnabled(false);
         }
 
-        if( mContacts.getUrlTwitter() != null ) {
+        if (mContacts.getUrlTwitter() != null) {
             mTextTwitter.setText(mContacts.getUrlTwitter());
             btnOpenTwitter.setVisibility(View.VISIBLE);
             btnOpenTwitter.setEnabled(true);
@@ -118,7 +132,7 @@ public class PerfilActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menu) {
-        switch (menu.getItemId()){
+        switch (menu.getItemId()) {
             case android.R.id.home:
                 this.backToHome();
                 return true;
@@ -128,13 +142,13 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btn_edit_contacts_perfil)
-    public void onClickEdit(){
-        startActivityUtils.run(EditActivity.class,mContacts);
+    public void onClickEdit() {
+        startActivityUtils.run(EditActivity.class, mContacts);
         this.finish();
     }
 
     @OnClick(R.id.btn_delete_contacts_perfil)
-    public void onClickDelete(){
+    public void onClickDelete() {
         deleteContacts(mContacts);
     }
 
@@ -154,9 +168,9 @@ public class PerfilActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void delete(){
+    public void delete() {
         Boolean tost = db.delete(mContacts);
-        if(tost) {
+        if (tost) {
             showMessageUtils.showMessageLong(mContacts.getName() + " deletado.");
             this.backToHome();
         } else {
@@ -165,21 +179,70 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.open_call_perfil)
-    public void onCallClicked(){
-        showMessageUtils.showMessageLong("implement this");
-        //TODO - make
+    public void onCallClicked() {
+        new PermissionUtils(this, Manifest.permission.CALL_PHONE, new CallbackPermission() {
+            @Override
+            public void permissionResponse(boolean response) {
+                if (response)
+                    startIntentCall();
+                else
+                    showMessageUtils.showMessageLong("Permissão negada");
+            }
+        }).getPermission();
+    }
+
+    private void startIntentCall() {
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:" + mContacts.getPhoneNumber()));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        startActivity(callIntent);
     }
 
     @OnClick(R.id.open_message_perfil)
     public void onMessageClicked(){
-        showMessageUtils.showMessageShort("implement this");
-        //TODO - make
+        new PermissionUtils(this, Manifest.permission.SEND_SMS, new CallbackPermission() {
+            @Override
+            public void permissionResponse(boolean response) {
+                if (response)
+                    startIntentSMS();
+                else
+                    showMessageUtils.showMessageLong("Permissão negada");
+            }
+        }).getPermission();
     }
 
-    @OnClick(R.id.open_wpp_perfil)
-    public void onWppClicked(){
-        showMessageUtils.showMessageShort("implement this");
-        //TODO - make
+
+    private void startIntentSMS() {
+        Panel.alertPanelWithED(this, "SMS", "Escreva sua mensagem SMS abaixo.", "Enviar", "Cancelar", new CallbackAlertDialogWithED() {
+            @Override
+            public void onPositiveButtonPressed(String inputED) {
+                if (inputED != null) {
+                    if ( inputED.length() > 0 ) {
+                        startActivitySMS(inputED);
+                    } else {
+                        startIntentSMS();
+                    }
+                } else {
+                    startIntentSMS();
+                }
+            }
+
+            @Override
+            public void onNegativeButtonPressed() {
+
+            }
+        }).show();
+
+    }
+
+    private void startActivitySMS(String msg) {
+        Uri uri = Uri.parse("smsto:"+ mContacts.getPhoneNumber());
+        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+        smsIntent.setData(uri);
+        smsIntent.putExtra("sms_body", msg);
+        startActivity(smsIntent);
     }
 
     @OnClick(R.id.open_email_perfil)
@@ -216,4 +279,57 @@ public class PerfilActivity extends AppCompatActivity {
         this.backToHome();
         super.onBackPressed();
     }
+
+    //
+//    @OnClick(R.id.open_wpp_perfil)
+//    public void onWppClicked(){
+//        new PermissionUtils(this, Manifest.permission.SEND_SMS, new CallbackPermission() {
+//            @Override
+//            public void permissionResponse(boolean response) {
+//                if (response)
+//                    startIntentWPP();
+//                else
+//                    showMessageUtils.showMessageLong("Permissão negada");
+//            }
+//        }).getPermission();
+//    }
+//
+//    private void startIntentWPP(){
+//        Panel.alertPanelWithED(this, "Whatsapp", "Escreva sua mensagem abaixo.", "Enviar", "Cancelar", new CallbackAlertDialogWithED() {
+//            @Override
+//            public void onPositiveButtonPressed(String inputED) {
+//                if (inputED != null) {
+//                    if ( inputED.length() > 0 ) {
+//                        startActivityWPP(inputED);
+//                    } else {
+//                        startIntentWPP();
+//                    }
+//                } else {
+//                    startIntentWPP();
+//                }
+//            }
+//
+//            @Override
+//            public void onNegativeButtonPressed() {
+//
+//            }
+//        }).show();
+//    }
+//
+//    private void startActivityWPP(String msg) {
+//        PackageManager pm=getPackageManager();
+//        try {
+//            Intent wppIntent = new Intent(Intent.ACTION_SEND);
+//            wppIntent.setType("text/plain");
+//            wppIntent.setData(Uri.parse("id:" + mContacts.getPhoneNumber()));
+//            PackageInfo info = pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
+//            wppIntent.setPackage("com.whatsapp");
+//            wppIntent.putExtra(Intent.EXTRA_TEXT, msg);
+//            startActivity(Intent.createChooser(wppIntent,"share with"));
+//
+//        } catch (PackageManager.NameNotFoundException e) {
+//            showMessageUtils.showMessageShort("WhatsApp not Installed");
+//        }
+//
+//    }
 }
