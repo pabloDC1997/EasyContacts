@@ -12,17 +12,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.pablo.easycontacts.Models.Contact;
+import com.example.pablo.easycontacts.Models.ObjectMail;
 import com.example.pablo.easycontacts.R;
 import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
 import com.example.pablo.easycontacts.callbacks.CallbackAlertDialogWithED;
 import com.example.pablo.easycontacts.callbacks.CallbackPermission;
 import com.example.pablo.easycontacts.db.OperationDB;
+import com.example.pablo.easycontacts.utils.FormatEmailUtils;
 import com.example.pablo.easycontacts.utils.FormatterNumberUtils;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
@@ -218,14 +221,12 @@ public class PerfilActivity extends AppCompatActivity {
         Panel.alertPanelWithED(this, "SMS", "Escreva sua mensagem SMS abaixo.", "Enviar", "Cancelar", new CallbackAlertDialogWithED() {
             @Override
             public void onPositiveButtonPressed(String inputED) {
-                if (inputED != null) {
-                    if ( inputED.length() > 0 ) {
-                        startActivitySMS(inputED);
-                    } else {
-                        startIntentSMS();
-                    }
-                } else {
+                if (inputED == null){
                     startIntentSMS();
+                } else if (inputED.length() <= 0){
+                    startIntentSMS();
+                } else {
+                    startActivitySMS(inputED);
                 }
             }
 
@@ -247,8 +248,47 @@ public class PerfilActivity extends AppCompatActivity {
 
     @OnClick(R.id.open_email_perfil)
     public void onEMailClicked(){
-        showMessageUtils.showMessageShort("implement this");
-        //TODO - make
+        Panel.alertPanelWithED(this, "E-Mail"
+                , "Adicione um assunto, tecle enter e escreva seu e-mail."
+                , "Enviar"
+                , "Cancelar"
+                , new CallbackAlertDialogWithED() {
+            @Override
+            public void onPositiveButtonPressed(String inputED) {
+                if (inputED == null){
+                    onEMailClicked();
+                } else if (inputED.length() <= 0){
+                    onEMailClicked();
+                } else {
+                    try {
+                        ObjectMail param = FormatEmailUtils.FORMAT_MAIL(inputED);
+
+                        if (param == null){
+                            new Exception("Erro inesperado, metodo onEmailClicked");
+                        }
+
+                        startActivityEmail(param.getTitle(),param.getBody());
+                    }catch (Exception e) {
+                        Log.e(MainActivity.class.getName(),e.getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onNegativeButtonPressed() {
+
+            }
+        }).show();
+    }
+
+    private void startActivityEmail(String subject, String msg) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setType("text/plain");
+        intent.setData(Uri.parse("mailto:"+mContacts.getE_Mail()));
+//        intent.putExtra(Intent.EXTRA_EMAIL, mContacts.getE_Mail());
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, msg);
+        startActivity(intent);
     }
 
     @OnClick(R.id.open_facebook_perfil)
