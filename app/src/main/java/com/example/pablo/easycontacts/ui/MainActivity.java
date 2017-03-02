@@ -6,17 +6,13 @@ package com.example.pablo.easycontacts.ui;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.SearchManager;
 
-import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.pablo.easycontacts.Models.Contact;
@@ -34,6 +31,7 @@ import com.example.pablo.easycontacts.adapters.ContactsAdapter;
 import com.example.pablo.easycontacts.adapters.DividerItemDecoration;
 import com.example.pablo.easycontacts.adapters.RecyclerTouchListener;
 import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
+import com.example.pablo.easycontacts.callbacks.CallbackAlertDialogWithED;
 import com.example.pablo.easycontacts.callbacks.CallbackByImportToDB;
 import com.example.pablo.easycontacts.callbacks.CallbackLoadingContacts;
 import com.example.pablo.easycontacts.callbacks.CallbackPermission;
@@ -42,6 +40,7 @@ import com.example.pablo.easycontacts.db.OperationDB;
 import com.example.pablo.easycontacts.services.ImportIntoDB;
 import com.example.pablo.easycontacts.services.LoadingContactsData;
 import com.example.pablo.easycontacts.services.ReadContacsAscy;
+import com.example.pablo.easycontacts.utils.Filters.Filter;
 import com.example.pablo.easycontacts.utils.KeyID;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
@@ -71,12 +70,19 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     @BindView(R.id.btn_add_icon)
     FloatingActionButton btnAddContact;
 
+    @BindView(R.id.layout_search)
+    RelativeLayout layoutSearch;
+
+    @BindView(R.id.btn_desativar_filtro)
+    Button btnDismissFiltro;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Realm.init(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        layoutSearch.setVisibility(View.GONE);
         showMessageUtils = new ShowMessageUtils(this);
         contactList = new ArrayList<>();
         openActivity = new StartActivityUtils(this);
@@ -96,9 +102,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         return true;
     }
 
@@ -113,10 +117,48 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
                 return true;
             case R.id.delete_all:
                 this.deleteAllContacts();
+                return true;
+            case R.id.action_search:
+                this.buildContactsData();
+                this.turnOnFilter();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void turnOnFilter() {
+        Panel.alertPanelWithED(this, "Pesquisar:", "Insira o nome que deseja pesquisar.", "Pesquisar", "Concelar", new CallbackAlertDialogWithED() {
+            @Override
+            public void onPositiveButtonPressed(String inputED) {
+                if (inputED.length() > 0) {
+                    runFilter(inputED);
+                } else {
+                    showMessageUtils.showMessageShort("Nome invalido.");
+                }
+            }
+
+            @Override
+            public void onNegativeButtonPressed() {
+
+            }
+        }).show();
+    }
+
+    private void runFilter(String name) {
+        Filter filter = new Filter();
+        List<Contact> listAux = filter.filterByName(contactList, name);
+        contactList.clear();
+        contactList.addAll(listAux);
+        mAdapter.notifyDataSetChanged();
+        layoutSearch.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.btn_desativar_filtro)
+    public void onDismissFilterClicked(){
+        layoutSearch.setVisibility(View.GONE);
+        this.buildContactsData();
     }
 
     private void deleteAllContacts() {
@@ -142,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
             @Override
             public void onPositiveButtonPressed() {
                 delete(pos);
+                layoutSearch.setVisibility(View.GONE);
             }
 
             @Override
