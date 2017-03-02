@@ -5,16 +5,15 @@
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
-        android:title="@string/pesquisar"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView" />
+        android:title=""
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/import_contacts"
         android:title="@string/importar_contatos" />
 
     <item
-        android:id="@+id/save_contacts_on_driver"
-        android:title="@string/salvar_na_nuvem" />
+        android:id="@+id/delete_all"
+        android:title="@string/delete_all" />
 
     <item
         android:id="@+id/about"

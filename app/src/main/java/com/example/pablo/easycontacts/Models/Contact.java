@@ -2,6 +2,8 @@ package com.example.pablo.easycontacts.Models;
 
 import android.graphics.Bitmap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -10,17 +12,19 @@ import java.util.Objects;
  */
 
 public class Contact implements Serializable {
-    private String urlPhoto;
+    private String id;
     private String name;
     private String phoneNumber;
     private String e_Mail;
     private String urlFacebook;
     private String urlTwitter;
     private String urlInstagram;
+    private String urlPhoto;
     private Bitmap bitmap;
 
 
-    public Contact() {
+    public Contact(String id) {
+        this.id = id;
         this.name = "no name";
         this.phoneNumber = null;
         this.e_Mail = null;
@@ -29,39 +33,45 @@ public class Contact implements Serializable {
         this.urlInstagram = null;
     }
 
-    public Contact(String name, String phoneNumber) {
+    public Contact(String id, String name, String phoneNumber, String e_Mail, String urlFacebook, String urlTwitter, String urlInstagram, String urlPhoto) {
+        this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.e_Mail = null;
-        this.urlFacebook = null;
-        this.urlTwitter = null;
-        this.urlInstagram = null;
-
-    }
-
-    public Contact(String name, String phoneNumber, String eMail, String urlFacebook, String urlTwitter, String urlInstagram) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.e_Mail = eMail;
-        this.urlFacebook = urlFacebook;
-        this.urlTwitter = urlTwitter;
-        this.urlInstagram = urlInstagram;
-
-    }
-    public Contact(String name, String phoneNumber, String eMail, String urlFacebook, String urlTwitter, String urlInstagram, String urlPhoto) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.e_Mail = eMail;
+        this.e_Mail = e_Mail;
         this.urlFacebook = urlFacebook;
         this.urlTwitter = urlTwitter;
         this.urlInstagram = urlInstagram;
         this.urlPhoto = urlPhoto;
     }
 
-    public Contact(String name, String phoneNumber, String eMail) {
+    public Contact(String id, String name, String phoneNumber, String e_Mail, String urlFacebook, String urlTwitter, String urlInstagram, String urlPhoto, Bitmap bitmap) {
+        this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.e_Mail = eMail;
+        this.e_Mail = e_Mail;
+        this.urlFacebook = urlFacebook;
+        this.urlTwitter = urlTwitter;
+        this.urlInstagram = urlInstagram;
+        this.urlPhoto = urlPhoto;
+        this.bitmap = bitmap;
+    }
+
+    public Contact(String id, String name, String phoneNumber, String e_Mail, String urlFacebook, String urlTwitter, String urlInstagram) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.e_Mail = e_Mail;
+        this.urlFacebook = urlFacebook;
+        this.urlTwitter = urlTwitter;
+        this.urlInstagram = urlInstagram;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUrlPhoto() {

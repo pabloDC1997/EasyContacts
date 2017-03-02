@@ -3,6 +3,7 @@ package com.example.pablo.easycontacts.ui;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
@@ -59,8 +60,6 @@ public class PerfilActivity extends AppCompatActivity {
     ImageView btnOpenCall;
     @BindView(R.id.open_message_perfil)
     ImageView btnOpenMessageText;
-//    @BindView(R.id.open_wpp_perfil)
-//    ImageView btnOpenWhatsapp;
     @BindView(R.id.open_email_perfil)
     ImageView btnOpenEmail;
     @BindView(R.id.open_facebook_perfil)
@@ -296,10 +295,18 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private void starAticityFACEBOOK() {
-        //todo implement this integration with the app, not webpage
-        Uri uri = Uri.parse("https://www."+mContacts.getUrlFacebook());
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        if (intent.resolveActivity(getPackageManager()) != null) {
+        final String username = mContacts.getUrlFacebook().substring(mContacts.getUrlFacebook().lastIndexOf("/") + 1);
+        Uri uri = Uri.parse("https://www.facebook.com/"+username);
+        PackageManager pm = getPackageManager();
+
+        try {
+            ApplicationInfo applicationInfo = pm.getApplicationInfo("com.facebook.katana", 0);
+            if (applicationInfo.enabled) {
+                uri = Uri.parse("fb://facewebmodal/f?href=" + uri);
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            }
+        }catch (PackageManager.NameNotFoundException ignored) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         }
     }
@@ -359,57 +366,4 @@ public class PerfilActivity extends AppCompatActivity {
         this.backToHome();
         super.onBackPressed();
     }
-
-    //
-//    @OnClick(R.id.open_wpp_perfil)
-//    public void onWppClicked(){
-//        new PermissionUtils(this, Manifest.permission.SEND_SMS, new CallbackPermission() {
-//            @Override
-//            public void permissionResponse(boolean response) {
-//                if (response)
-//                    startIntentWPP();
-//                else
-//                    showMessageUtils.showMessageLong("Permissão negada");
-//            }
-//        }).getPermission();
-//    }
-//
-//    private void startIntentWPP(){
-//        Panel.alertPanelWithED(this, "Whatsapp", "Escreva sua mensagem abaixo.", "Enviar", "Cancelar", new CallbackAlertDialogWithED() {
-//            @Override
-//            public void onPositiveButtonPressed(String inputED) {
-//                if (inputED != null) {
-//                    if ( inputED.length() > 0 ) {
-//                        startActivityWPP(inputED);
-//                    } else {
-//                        startIntentWPP();
-//                    }
-//                } else {
-//                    startIntentWPP();
-//                }
-//            }
-//
-//            @Override
-//            public void onNegativeButtonPressed() {
-//
-//            }
-//        }).show();
-//    }
-//
-//    private void startActivityWPP(String msg) {
-//        PackageManager pm=getPackageManager();
-//        try {
-//            Intent wppIntent = new Intent(Intent.ACTION_SEND);
-//            wppIntent.setType("text/plain");
-//            wppIntent.setData(Uri.parse("id:" + mContacts.getPhoneNumber()));
-//            PackageInfo info = pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
-//            wppIntent.setPackage("com.whatsapp");
-//            wppIntent.putExtra(Intent.EXTRA_TEXT, msg);
-//            startActivity(Intent.createChooser(wppIntent,"share with"));
-//
-//        } catch (PackageManager.NameNotFoundException e) {
-//            showMessageUtils.showMessageShort("WhatsApp not Installed");
-//        }
-//
-//    }
 }
