@@ -162,7 +162,13 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void deleteAllContacts() {
-        //todo implement this method
+        //todo implement dialog
+        try{
+            db.deleteAll();
+            this.buildContactsData();
+        }catch (Exception e){
+            Log.e(MainActivity.class.getName(),e.getMessage());
+        }
     }
 
     private void showAbout() {

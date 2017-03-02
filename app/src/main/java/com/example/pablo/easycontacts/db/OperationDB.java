@@ -130,5 +130,22 @@ public  class OperationDB implements interfaceDB<Contact> {
         }
     }
 
+    @Override
+    public boolean deleteAll() {
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
+            RealmResults<ContactsDB> results = realm.where(ContactsDB.class).findAll();
+            results.deleteAllFromRealm();
+
+            realm.commitTransaction();
+            realm.close();
+            return true;
+        }catch (RealmException e){
+            return false;
+        }
+    }
+
 
 }

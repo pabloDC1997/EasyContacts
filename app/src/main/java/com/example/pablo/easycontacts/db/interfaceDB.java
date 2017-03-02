@@ -11,4 +11,5 @@ public interface interfaceDB<T>{
     boolean insert(T obj);
     boolean update(T oldObj, T newObj);
     boolean delete(T obj);
+    boolean deleteAll( );
 }
