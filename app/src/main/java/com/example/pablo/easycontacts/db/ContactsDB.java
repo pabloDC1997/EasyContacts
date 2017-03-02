@@ -11,13 +11,30 @@ import io.realm.annotations.PrimaryKey;
 
 public class ContactsDB extends RealmObject {
 
-
-    @NotNull private String name;
+    @PrimaryKey private String id;
+    private String name;
     private String phoneNumber;
     private String e_Mail;
     private String urlFacebook;
     private String urlTwitter;
     private String urlInstagram;
+    private String urlPhoto;
+
+    public String getUrlPhoto() {
+        return urlPhoto;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setUrlPhoto(String urlPhoto) {
+        this.urlPhoto = urlPhoto;
+    }
 
     public String getName() {
         return name;

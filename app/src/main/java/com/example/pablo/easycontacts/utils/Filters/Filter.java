@@ -19,12 +19,12 @@ public class Filter implements InterfaceFilters<Contact> {
     @Override
     public List<Contact> filterByName(List<Contact> list, String name) {
         List<Contact> responseList = new ArrayList<>();
-        for (int i=0; i<list.size(); i++){
-            String nameByObj = list.get(i).getName();
-            if (name.contains(nameByObj)){
-                responseList.add(list.get(i));
+        for (Contact param : list ) {
+            if (param.getName().toUpperCase().contains(name.toUpperCase())) {
+                responseList.add(param);
             }
         }
+
         return responseList;
     }
 }
