@@ -13,6 +13,7 @@ import com.azimolabs.maskformatter.MaskFormatter;
 import com.example.pablo.easycontacts.Models.Contact;
 import com.example.pablo.easycontacts.R;
 import com.example.pablo.easycontacts.db.OperationDB;
+import com.example.pablo.easycontacts.utils.KeyID;
 import com.example.pablo.easycontacts.utils.KeyUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
@@ -145,12 +146,17 @@ public class InsertActivity extends AppCompatActivity {
         if (twitter.equals(KeyUtils.URL_TWITTER) || twitter.length() < KeyUtils.URL_TWITTER.length())
             twitter = null;
 
-        newContacts = new Contact(name,
+        KeyID key = new KeyID();
+        String id = key.get();
+        newContacts = new Contact(id,
+                name,
                 phone,
                 email,
                 facebook,
                 twitter,
-                instagram);
+                instagram,
+                null
+                );
 
         db.insert(newContacts);
         message.showMessageLong(newContacts.getName() + " salvo com sucesso!");

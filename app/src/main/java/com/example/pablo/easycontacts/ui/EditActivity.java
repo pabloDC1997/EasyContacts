@@ -12,6 +12,7 @@ import com.example.pablo.easycontacts.Models.Contact;
 import com.example.pablo.easycontacts.R;
 import com.example.pablo.easycontacts.db.OperationDB;
 import com.example.pablo.easycontacts.utils.Filters.InterfaceFilters;
+import com.example.pablo.easycontacts.utils.KeyID;
 import com.example.pablo.easycontacts.utils.KeyUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
 import com.example.pablo.easycontacts.utils.StartActivityUtils;
@@ -185,12 +186,18 @@ public class EditActivity extends AppCompatActivity {
         String newInstagram = editTextInstagram.getText().toString();
         String newTwitter = editTextTwitter.getText().toString();
 
-        newContacs = new Contact(newName,
+        KeyID key = new KeyID();
+        String id = key.get();
+
+        newContacs = new Contact(
+                id,
+                newName,
                 newPhone,
                 newEmail,
                 newFacebook,
                 newTwitter,
-                newInstagram);
+                newInstagram,
+                null);
     }
 
     @Override

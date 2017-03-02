@@ -48,6 +48,9 @@ public class ImportIntoDB extends AsyncTask<Void,Void,Boolean>{
             boolean response = true;
             for (int i=0; i< mListContacts.size(); i++){
                 response = db.insert(mListContacts.get(i));
+                if (!response){
+                    throw new Exception("Erro inesperado");
+                }
             }
             return response;
         }catch (Exception e){
