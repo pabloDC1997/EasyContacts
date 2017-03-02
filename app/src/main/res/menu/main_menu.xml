@@ -13,8 +13,8 @@
         android:title="@string/importar_contatos" />
 
     <item
-        android:id="@+id/save_contacts_on_driver"
-        android:title="@string/salvar_na_nuvem" />
+        android:id="@+id/delete_all"
+        android:title="@string/delete_all" />
 
     <item
         android:id="@+id/about"

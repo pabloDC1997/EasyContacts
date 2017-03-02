@@ -3,6 +3,7 @@ package com.example.pablo.easycontacts.ui;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
@@ -294,10 +295,18 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private void starAticityFACEBOOK() {
-        //todo implement this integration with the app, not webpage
-        Uri uri = Uri.parse("https://www."+mContacts.getUrlFacebook());
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        if (intent.resolveActivity(getPackageManager()) != null) {
+        final String username = mContacts.getUrlFacebook().substring(mContacts.getUrlFacebook().lastIndexOf("/") + 1);
+        Uri uri = Uri.parse("https://www.facebook.com/"+username);
+        PackageManager pm = getPackageManager();
+
+        try {
+            ApplicationInfo applicationInfo = pm.getApplicationInfo("com.facebook.katana", 0);
+            if (applicationInfo.enabled) {
+                uri = Uri.parse("fb://facewebmodal/f?href=" + uri);
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            }
+        }catch (PackageManager.NameNotFoundException ignored) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         }
     }

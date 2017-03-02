@@ -42,6 +42,7 @@ import com.example.pablo.easycontacts.db.OperationDB;
 import com.example.pablo.easycontacts.services.ImportIntoDB;
 import com.example.pablo.easycontacts.services.LoadingContactsData;
 import com.example.pablo.easycontacts.services.ReadContacsAscy;
+import com.example.pablo.easycontacts.utils.KeyID;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
@@ -110,10 +111,16 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
             case R.id.about:
                 this.showAbout();
                 return true;
+            case R.id.delete_all:
+                this.deleteAllContacts();
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void deleteAllContacts() {
+        //todo implement this method
     }
 
     private void showAbout() {
@@ -206,7 +213,11 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
 
         for (int i=0; i<listResponse.size();  i++){
             MyContentContacts contactFromDevice = listResponse.get(i);
-            Contact auxContact = new Contact(contactFromDevice.getName(),
+            KeyID key = new KeyID();
+            String id = key.get();
+            Contact auxContact = new Contact(
+                    id,
+                    contactFromDevice.getName(),
                     contactFromDevice.getPhones(),
                     contactFromDevice.getMail(),
                     null,
