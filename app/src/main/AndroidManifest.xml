@@ -22,7 +22,7 @@
         </activity>
         <activity android:name=".ui.EditActivity" />
         <activity android:name=".ui.InsertActivity" />
-        <activity android:name=".ui.PerfilActivity"></activity>
+        <activity android:name=".ui.PerfilActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

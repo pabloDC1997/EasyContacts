@@ -7,18 +7,25 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,16 +38,15 @@ import com.example.pablo.easycontacts.adapters.ContactsAdapter;
 import com.example.pablo.easycontacts.adapters.DividerItemDecoration;
 import com.example.pablo.easycontacts.adapters.RecyclerTouchListener;
 import com.example.pablo.easycontacts.callbacks.CallbackAlertDialog;
-import com.example.pablo.easycontacts.callbacks.CallbackAlertDialogWithED;
 import com.example.pablo.easycontacts.callbacks.CallbackByImportToDB;
 import com.example.pablo.easycontacts.callbacks.CallbackLoadingContacts;
 import com.example.pablo.easycontacts.callbacks.CallbackPermission;
 import com.example.pablo.easycontacts.callbacks.CallbackReadContacts;
+import com.example.pablo.easycontacts.db.DatabaseFilters;
 import com.example.pablo.easycontacts.db.OperationDB;
 import com.example.pablo.easycontacts.services.ImportIntoDB;
 import com.example.pablo.easycontacts.services.LoadingContactsData;
 import com.example.pablo.easycontacts.services.ReadContacsAscy;
-import com.example.pablo.easycontacts.utils.Filters.Filter;
 import com.example.pablo.easycontacts.utils.KeyID;
 import com.example.pablo.easycontacts.utils.Panel;
 import com.example.pablo.easycontacts.utils.PermissionUtils;
@@ -55,7 +61,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements ClickListener {
+public class MainActivity extends AppCompatActivity implements ClickListener, TextWatcher {
 
     private List<Contact> contactList;
     private RecyclerView recyclerView;
@@ -73,8 +79,9 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     @BindView(R.id.layout_search)
     RelativeLayout layoutSearch;
 
-    @BindView(R.id.btn_desativar_filtro)
-    Button btnDismissFiltro;
+    EditText editTextSearch;
+
+    List<Contact> listContactsAux;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +89,12 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         Realm.init(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        editTextSearch = (EditText) findViewById(R.id.et_search);
+        editTextSearch.addTextChangedListener(this);
+        layoutSearch.setEnabled(false);
         layoutSearch.setVisibility(View.GONE);
+
         showMessageUtils = new ShowMessageUtils(this);
         contactList = new ArrayList<>();
         openActivity = new StartActivityUtils(this);
@@ -96,13 +108,15 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         recyclerView.setAdapter(mAdapter);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, this));
         buildContactsData();
+
+        listContactsAux = new ArrayList<>();
+        listContactsAux.addAll(contactList);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-
         return true;
     }
 
@@ -119,50 +133,14 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
                 this.deleteAllContacts();
                 return true;
             case R.id.action_search:
-                this.buildContactsData();
-                this.turnOnFilter();
-                return true;
+                changeLayoutSearch();
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
 
-    private void turnOnFilter() {
-        Panel.alertPanelWithED(this, "Pesquisar:", "Insira o nome que deseja pesquisar.", "Pesquisar", "Concelar", new CallbackAlertDialogWithED() {
-            @Override
-            public void onPositiveButtonPressed(String inputED) {
-                if (inputED.length() > 0) {
-                    runFilter(inputED);
-                } else {
-                    showMessageUtils.showMessageShort("Nome invalido.");
-                }
-            }
-
-            @Override
-            public void onNegativeButtonPressed() {
-
-            }
-        }).show();
-    }
-
-    private void runFilter(String name) {
-        Filter filter = new Filter();
-        List<Contact> listAux = filter.filterByName(contactList, name);
-        contactList.clear();
-        contactList.addAll(listAux);
-        mAdapter.notifyDataSetChanged();
-        layoutSearch.setVisibility(View.VISIBLE);
-    }
-
-    @OnClick(R.id.btn_desativar_filtro)
-    public void onDismissFilterClicked(){
-        layoutSearch.setVisibility(View.GONE);
-        this.buildContactsData();
-    }
-
     private void deleteAllContacts() {
-        //todo implement dialog
         try{
             db.deleteAll();
             this.buildContactsData();
@@ -172,16 +150,33 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void showAbout() {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_about);
-        final TextView tv = (TextView) dialog.findViewById(R.id.tv);
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Easy Contacts")
+                .setMessage(getString(R.string.about_me))
+                .setNegativeButton("Voltar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .setPositiveButton("Código-fonte", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        openGitHub();
+                    }
+                });
+        AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void openGitHub() {
+        try {
+            Uri uri = Uri.parse("https://github.com/pabloDC1997/EasyContacts.git");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }catch (Exception e ){
+            showMessageUtils.showMessageShort("Erro inesperado.");
+        }
     }
 
     private void deleteContacts(int position) {
@@ -383,5 +378,38 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     @Override
     public void onLongClick(View view, int position) {
         openDialogLayout(contactList.get(position).getName(), position);
+    }
+
+    private void changeLayoutSearch() {
+        if ( layoutSearch.isEnabled() ) {
+            layoutSearch.setEnabled(false);
+            layoutSearch.setVisibility(View.GONE);
+        } else {
+            layoutSearch.setEnabled(true);
+            layoutSearch.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        String param = charSequence.toString();
+        this.applyFilter(param);
+    }
+
+    private void applyFilter(String param) {
+        List<Contact> l = DatabaseFilters.filterByName(param);
+        contactList.clear();
+        contactList.addAll(l);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }

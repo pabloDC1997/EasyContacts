@@ -6,7 +6,7 @@
     <string name="sobre_mycontacts">Sobre MyContacts</string>
     <string name="voltar">Voltar</string>
     <string name="voltar2">Voltar</string>
-    <string name="pesquisar">Buscar</string>
+    <string name="pesquisar">Pesquisar...</string>
     <string name="cancelar">Cancelar</string>
     <string name="nome">Nome:</string>
     <string name="numero">Numero:</string>
@@ -19,17 +19,8 @@
     <string name="delete_all">Deletar Todos</string>
     <string name="sobre">Sobre...</string>
     <string name="about_me">
-        This app was developed by:
-        \n
-        Pablo D.C.
-        \n
-        Computer Engineering student\n
-        at
-        \n
-        PUC-GO
-        \n\n
-        All the right reserved
-        \n
-        Brazil/2017.
+        This app was developed by Pablo D.C. Computer Engineering student at PUC-GO
+        \n\n\n
+        \t\t\t\t\t\tBrazil/2017.
     </string>
 </resources>

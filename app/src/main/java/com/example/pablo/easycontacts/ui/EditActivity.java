@@ -11,7 +11,6 @@ import android.widget.EditText;
 import com.example.pablo.easycontacts.Models.Contact;
 import com.example.pablo.easycontacts.R;
 import com.example.pablo.easycontacts.db.OperationDB;
-import com.example.pablo.easycontacts.utils.Filters.InterfaceFilters;
 import com.example.pablo.easycontacts.utils.KeyID;
 import com.example.pablo.easycontacts.utils.KeyUtils;
 import com.example.pablo.easycontacts.utils.ShowMessageUtils;
