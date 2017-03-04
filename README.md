@@ -1,4 +1,4 @@
-<html>
+ <html>
 	<h1>Easy Contacts</h1>
 	<p>A simple Contacts manage application</p>
 	<p>The Easy Contacts has some integrations using Contents providers and make something cool. Was aplicated the OOP concepts, and I'm trying to implemet using the MVC archictecure</p>
@@ -8,7 +8,7 @@
 			<li>IDE: Android Studio</li>
 			<li>Language: JAVA, XML</li>
 			<li>JAVA VERSION: 8</li>
-			<li>Code writed: English </li>
+			<li>Code written: English </li>
 			<li>Language user interface: Portugues(PT)</li>  		
 		</ul>
 		<h5>Developer:</h5> 
