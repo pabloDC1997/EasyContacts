@@ -13,7 +13,12 @@
 		</ul>
 		<h5>Developer:</h5> 
 		<p>Pablo Dias - Brazilian - Computer Engineering student.</p>
-		<h3>akpablo1997@gmail.com</h3>
+		<h4>
+		akpablo1997@gmail.com
+			<p>
+			Link APK: https://drive.google.com/file/d/0B7UozQEM8WChdHNrZm5QdDFiSFE/view?usp=sharing
+			</p>
+		</h4>
 	</div>	
 </html>
 
