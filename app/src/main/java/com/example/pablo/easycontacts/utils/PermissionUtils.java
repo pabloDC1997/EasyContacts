@@ -35,16 +35,13 @@ public class PermissionUtils {
 
             @Override
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-//                message.showMessageLong("Permissão negada.");
                 mCallback.permissionResponse(false);
             }
         };
         new TedPermission(mContext)
-                .setPermissionListener(permission)
-                .setRationaleMessage("Easy contacts precissa de permissão para acessar os contatos amazenados no telefone.")
-                .setDeniedMessage("Se você rejeitar a permissão, Easy Contacts não consiguirá importar contatos de seu telefone")
-                .setGotoSettingButtonText("setting")
-                .setPermissions(typePermission, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SYSTEM_ALERT_WINDOW)
+                .setPermissionListener(permissionlistener)
+                .setRationaleMessage("Easy contacts precissa de permissão para acessar recursos do seu telefone.")
+                .setPermissions(typePermission)
                 .check();
     }
 }
