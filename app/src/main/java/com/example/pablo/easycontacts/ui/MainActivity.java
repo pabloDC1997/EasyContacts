@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements ClickListener, Te
         layoutSearch.setEnabled(false);
         layoutSearch.setVisibility(View.GONE);
 
+        System.out.println("teste");
+
         showMessageUtils = new ShowMessageUtils(this);
         contactList = new ArrayList<>();
         openActivity = new StartActivityUtils(this);

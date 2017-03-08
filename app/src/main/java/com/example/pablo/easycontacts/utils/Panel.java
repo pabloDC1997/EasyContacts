@@ -40,6 +40,7 @@ public class Panel {
 
             AlertDialog dialog = builder.create();
             return dialog;
+
         }
 
     public static AlertDialog alertPanelWithED(Context mContext, String title,
