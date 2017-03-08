@@ -13,13 +13,14 @@ import java.util.ArrayList;
  * Created by Pablo on 24/01/2017.
  */
 
-public class PermissionUtils {
+public class PermissionUtils  {
     private Context mContext;
     ShowMessageUtils message;
     CallbackPermission mCallback;
     String typePermission;
 
     public PermissionUtils(Context mContext, String typePermission,CallbackPermission callback) {
+
         this.mContext = mContext;
         this.message = new ShowMessageUtils(mContext);
         this.mCallback = callback;
@@ -27,7 +28,7 @@ public class PermissionUtils {
     }
 
     public void getPermission() {
-        PermissionListener permission = new PermissionListener() {
+        PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
                 mCallback.permissionResponse(true);
